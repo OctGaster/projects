@@ -1,0 +1,11 @@
+Tic-Tac-Toe
+This project is a tic-tac-toe game, which allows human user to play against computer. The turn order is chosen randomly, and first step is always made by 'X's.
+In order to make step, user have to input pair of coordinates of cell on the game field, where the user's mark ('X' or 'O') should be put. These coordinates are numbers from 1 to 3.
+When computer makes its step, it uses the following algorithm:
+Interpret game field as a 9D vector, where 'X's correspond to 1, 'O' to -1 and free cells are represented as zeros.
+All winning combinations of symbols are also encoded as 9D vectors, with ones in places of some symbol (either 'X' or 'O') and zeros on the other places.
+We can measure closeness of the current game field vector to any winning pattern by calculating cosine between the corresponding vectors.
+In order to decide, where to put the next symbol, computer calculates cosines between current game field vector and all winning patterns of 'X's and 'O's.
+Then, machine finds two cosines, which are the smallest in both groups of winning templates (regardless of sign), and compares them.
+If it finds that current game situation is about to computer's victory, it complements the combination of own symbols to the winning one.
+Otherwise, if user is closer to victory, machine tries not allow it to happen, and puts own symbol in the place of user's winning combination.
