@@ -1,4 +1,3 @@
 Tic-Tac-Toe
 
-    This project is a tic-tac-toe game, which allows human user to play against computer. The turn order is chosen randomly, and first step is always made by 'X's. In order to make step, user have to input pair of coordinates of cell on the game field, where the user's mark ('X' or 'O') should be put. These coordinates are numbers from 1 to 3.
-    Computer uses quite simple algorithm based on vector representation of the game, in order to make decisions. There are two play styles enabled to the AI. According to the first, computer tries to win, and according to the second it hinders the human player to win.
+    This project is a tic-tac-toe game. It has two modes -- AI vs. AI match or ordinary game, which allows human user to play against computer. The turn order is then chosen randomly, and first step is always made by 'X's. In order to make step, user have to input pair of coordinates of cell on the game field, where the user's mark ('X' or 'O') should be put. These coordinates are numbers from 1 to 3.
