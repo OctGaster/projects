@@ -41,6 +41,33 @@ class Status(Enum):
     Unfinished = 'Game not finished'
 
 
+def ai_step(game_state, mach_mark):
+    if np.linalg.norm(game_state) == 0:
+        game_state[np.random.randint(9)] = mach_mark
+        return
+    it1, dist1 = find_closest_template(game_state, mach_mark)
+    it2, dist2 = find_closest_template(game_state, -mach_mark)
+    if dist1 < dist2:
+        it = it1
+    else:
+        it = it2
+    cell_number = CELL_NOT_FOUND
+    temp = VECTOR_TEMPLATES[it]
+    for i, cell in enumerate(temp):
+        if cell != 0 and game_state[i] == 0:
+            game_state[i] = mach_mark
+            cell_number = i
+            break
+    if cell_number == CELL_NOT_FOUND:
+        invert_vector_state = [1 if cell == 0 else 0 for cell in game_state]
+        it, _ = find_closest_template(invert_vector_state, 1)
+        temp = VECTOR_TEMPLATES[it]
+        for i, cell in enumerate(temp):
+            if cell != 0 and game_state[i] == 0:
+                game_state[i] = mach_mark
+                break
+
+
 class Game:
     def __init__(self, machine_moves_first=False):
         self.mach_mark = 0
@@ -98,7 +125,6 @@ class Game:
                 if cell != 0 and self.state[i] == 0:
                     self.state[i] = self.mach_mark
                     break
-        print(cell_number)
 
     def print_state(self):
         print('---------')
@@ -115,35 +141,55 @@ class Game:
             sys.stdout.write('|\n')
         print('---------')
 
+    def update(self):
+        ai_step(self.state, self.user_mark)
+        self.print_state()
+        stat = self.status()
+        if stat != Status.Unfinished:
+            print(stat.value)
+            exit(0)
+        ai_step(self.state, self.mach_mark)
+        self.print_state()
+        stat = self.status()
+        if stat != Status.Unfinished:
+            print(stat.value)
+            exit(0)
 
-move_order = random.choice([0, 1])
-if move_order:
-    print('Machine makes first step')
-else:
-    print('First step is yours')
-game = Game(machine_moves_first=move_order)
-game.print_state()
-while 1:
-    try:
-        x, y = input('Enter the coordinates > ').split()
-        x = int(x)
-        y = int(y)
-        game.make_user_step(x, y)
-        game.print_state()
-    except ValueError:
-        print('You should enter numbers!')
-        continue
-    except IndexError as error:
-        print(error)
-        continue
-    stat = game.status()
-    if stat != Status.Unfinished:
-        print(stat.value)
-        exit(0)
-    print('Machine makes move')
-    game.make_mach_step()
+
+choice = input('Perform AI match? (y/n)')
+if choice == 'y':
+    game = Game()
+    while 1:
+        game.update()
+elif choice == 'n':
+    move_order = random.choice([0, 1])
+    if move_order:
+        print('Machine makes first step')
+    else:
+        print('First step is yours')
+    game = Game(machine_moves_first=move_order)
     game.print_state()
-    stat = game.status()
-    if stat != Status.Unfinished:
-        print(stat.value)
-        exit(0)
+    while 1:
+        try:
+            x, y = input('Enter the coordinates > ').split()
+            x = int(x)
+            y = int(y)
+            game.make_user_step(x, y)
+            game.print_state()
+        except ValueError:
+            print('You should enter numbers!')
+            continue
+        except IndexError as error:
+            print(error)
+            continue
+        stat = game.status()
+        if stat != Status.Unfinished:
+            print(stat.value)
+            exit(0)
+        print('Machine makes move')
+        game.make_mach_step()
+        game.print_state()
+        stat = game.status()
+        if stat != Status.Unfinished:
+            print(stat.value)
+            exit(0)
